@@ -1,10 +1,5 @@
 public class Hello {
-    public static void main(String[] args) throws Exception {
-
+    public static void main(String[] args) {
         System.out.println("Hello from Simple Project!");
-
-        while (true) {
-            Thread.sleep(10000);
-        }
     }
 }
