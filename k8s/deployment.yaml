@@ -19,4 +19,4 @@ spec:
     spec:
       containers:
         - name: jenkins-demo
-          image: payalkharat/jenkins-demo:latest
+          image: payalkharat/jenkins-demo:1.0
