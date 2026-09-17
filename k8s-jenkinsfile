@@ -2,64 +2,60 @@
 
 pipeline {
 
-```
-agent any
+    agent any
 
-stages {
+    stages {
 
-    stage('Checkout') {
-        steps {
-            checkout scm
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Java') {
+            steps {
+                buildJava()
+            }
+        }
+
+        stage('Test') {
+            steps {
+                testJava()
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                dockerLogin()
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dockerBuild(
+                    'payalkharat/jenkins-demo',
+                    "${BUILD_NUMBER}"
+                )
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                dockerPush(
+                    'payalkharat/jenkins-demo',
+                    "${BUILD_NUMBER}"
+                )
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh """
+                    kubectl set image deployment/jenkins-demo jenkins-demo=payalkharat/jenkins-demo:${BUILD_NUMBER}
+
+                    kubectl rollout status deployment/jenkins-demo
+                """
+            }
         }
     }
-
-    stage('Build Java') {
-        steps {
-            buildJava()
-        }
-    }
-
-    stage('Test') {
-        steps {
-            testJava()
-        }
-    }
-
-    stage('Docker Login') {
-        steps {
-            dockerLogin()
-        }
-    }
-
-    stage('Docker Build') {
-        steps {
-            dockerBuild(
-                'payalkharat/jenkins-demo',
-                "${BUILD_NUMBER}"
-            )
-        }
-    }
-
-    stage('Docker Push') {
-        steps {
-            dockerPush(
-                'payalkharat/jenkins-demo',
-                "${BUILD_NUMBER}"
-            )
-        }
-    }
-
-    stage('Deploy to Kubernetes') {
-        steps {
-            sh """
-                kubectl set image deployment/jenkins-demo \
-                  jenkins-demo=payalkharat/jenkins-demo:${BUILD_NUMBER}
-
-                kubectl rollout status deployment/jenkins-demo
-            """
-        }
-    }
-}
-```
-
 }
