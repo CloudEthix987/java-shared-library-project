@@ -6,4 +6,4 @@ COPY src/Hello.java .
 
 RUN javac Hello.java
 
-CMD ["java", "Hello"]
+CMD ["sh", "-c", "java Hello && tail -f /dev/null"]
