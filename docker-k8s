@@ -3,61 +3,26 @@
 pipeline {
 
     agent any
-
-    stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build Java') {
-            steps {
-                buildJava()
-            }
-        }
-
-        stage('Test') {
-            steps {
-                testJava()
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                dockerLogin()
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                dockerBuild(
-                    'payalkharat/jenkins-demo',
-                    '1.0'
-                )
-            }
-        }
-
-        stage('Docker Push') {
-            steps {
-                dockerPush(
-                    'payalkharat/jenkins-demo',
-                    '1.0'
-                )
-            }
-        }
-
-       stage('Deploy to Kubernetes') {
+   stages{
+    stage('Test Kubernetes') {
     steps {
         withCredentials([
-            file(credentialsId: 'kubeconfig-kind', variable: 'KUBECONFIG')
+            file(
+                credentialsId: 'kubeconfig-kind',
+                variable: 'KUBECONFIG'
+            )
         ]) {
             sh '''
-                kubectl --kubeconfig="$KUBECONFIG" get nodes
+                echo "Testing Kubernetes connection..."
+
+                kubectl --kubeconfig="$KUBECONFIG" \
+                    config current-context
+
+                kubectl --kubeconfig="$KUBECONFIG" \
+                    get nodes
             '''
         }
     }
 }
-    }
+}
 }
